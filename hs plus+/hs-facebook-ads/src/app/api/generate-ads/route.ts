@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
       } else {
         throw new Error("Unexpected JSON shape");
       }
-    } catch (e) {
+    } catch {
       // Fallback: poskusi iztisniti prvo JSON tabelo iz besedila
       try {
         const start = content.indexOf("[");
@@ -187,8 +187,8 @@ export async function POST(req: NextRequest) {
       source: { url, h1, meta, variant: Boolean(variantOf) },
       ads: normalized,
     });
-  } catch (error: any) {
-    const message = error?.message || "Neznana napaka";
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Neznana napaka";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

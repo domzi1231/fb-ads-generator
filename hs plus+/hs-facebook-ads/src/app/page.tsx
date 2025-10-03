@@ -26,7 +26,7 @@ export default function Home() {
   const [translateTo, setTranslateTo] = useState<string>("");
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen] = useState(true);
 
   function loadHistory() {
     try {
@@ -81,8 +81,9 @@ export default function Home() {
         label: new URL(url).hostname.replace("www.", ""),
         ads: data.ads || [],
       });
-    } catch (err: any) {
-      setError(err.message || "Neznana napaka");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Neznana napaka";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -93,7 +94,7 @@ export default function Home() {
     navigator.clipboard.writeText(text);
   }
 
-  async function generateVariants(base: AdItem, index: number) {
+  async function generateVariants(base: AdItem, _index: number) {
     try {
       setLoading(true);
       const res = await fetch("/api/generate-ads", {
@@ -110,8 +111,9 @@ export default function Home() {
         label: `Variacije: ${base.title.slice(0, 24)}`,
         ads: data.ads || [],
       });
-    } catch (err: any) {
-      setError(err.message || "Neznana napaka");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Neznana napaka";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -214,8 +216,9 @@ export default function Home() {
                   if (!res.ok) throw new Error(data?.error || "Napaka pri prevodu.");
                   setAds(data.ads);
                   pushHistory({ label: `Prevod v ${translateTo}`, ads: data.ads });
-                } catch (err: any) {
-                  setError(err.message || "Neznana napaka");
+                } catch (err: unknown) {
+                  const message = err instanceof Error ? err.message : "Neznana napaka";
+                  setError(message);
                 } finally {
                   setLoading(false);
                 }
